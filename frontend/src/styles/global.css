@@ -33,3 +33,41 @@ body { margin: 0; background: #f6f8fb; color: #1f2937; }
 .link { border: none; background: none; color: var(--brand); cursor: pointer; padding: 0; }
 .page-foot { display: flex; justify-content: space-between; margin-top: 8px; font-size: 12px; color: var(--muted); }
 .error-text { color: #b42318; }
+
+/* ===== 订阅推送：工具栏、数据集、时间线与批次明细 ===== */
+.page-actions { display: flex; gap: 8px; }
+.toolbar { display: flex; gap: 12px; align-items: flex-end; margin-bottom: 12px; flex-wrap: wrap; }
+.hint-text { color: var(--muted); font-size: 12px; }
+.ok-text { color: #067647; }
+.panel { background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; margin: 12px 0; }
+.panel-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 8px; }
+.panel-head h3, .panel-head h4 { margin: 0; font-size: 14px; }
+.panel-head h5 { font-size: 13px; margin: 12px 0 6px; }
+.dataset-row { display: flex; gap: 12px; flex-wrap: wrap; }
+.dataset-card { flex: 1 1 220px; border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 4px; }
+.dataset-meta { color: var(--muted); font-size: 12px; }
+.timeline { list-style: none; margin: 8px 0 0; padding: 0 0 0 6px; border-left: 2px solid var(--border); }
+.timeline-item { position: relative; padding: 8px 0 8px 18px; }
+.timeline-dot { position: absolute; left: -7px; top: 14px; width: 10px; height: 10px; border-radius: 50%; background: var(--brand); box-shadow: 0 0 0 2px #fff; }
+.timeline-item.stage-投递失败 .timeline-dot { background: #b42318; }
+.timeline-item.stage-静默暂存 .timeline-dot { background: #b54708; }
+.timeline-item.stage-已合并投递 .timeline-dot { background: #7f56d9; }
+.timeline-head { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.timeline-title { font-weight: 600; margin: 4px 0; }
+.timeline-meta { display: flex; gap: 14px; flex-wrap: wrap; color: var(--muted); font-size: 12px; }
+.tag { display: inline-block; border-radius: 999px; padding: 1px 8px; font-size: 12px; border: 1px solid var(--border); color: var(--muted); }
+.tag-已投递, .tag-已合并投递 { color: #067647; border-color: #abefc6; background: #ecfdf3; }
+.tag-投递失败 { color: #b42318; border-color: #fecdca; background: #fef3f2; }
+.tag-静默暂存 { color: #b54708; border-color: #fedf89; background: #fffaeb; }
+.tag-待合并, .tag-已合并, .tag-投递中 { color: #175cd3; border-color: #b2ddff; background: #eff8ff; }
+.failure-list { background: #fef3f2; border: 1px solid #fecdca; border-radius: 8px; padding: 8px 12px; margin: 8px 0; font-size: 13px; }
+.failure-list h4 { margin: 0 0 6px; font-size: 13px; color: #b42318; }
+.failure-list ul { margin: 0; padding-left: 18px; }
+.detail-panel { border-top: 1px dashed var(--border); margin-top: 12px; padding-top: 10px; }
+.detail-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 8px 16px; margin: 0; }
+.detail-grid dt { color: var(--muted); font-size: 12px; }
+.detail-grid dd { margin: 2px 0 0; font-size: 13px; word-break: break-all; }
+.entry-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; font-size: 13px; }
+.entry-list li { border: 1px solid var(--border); border-radius: 6px; padding: 8px 10px; }
+.entry-list strong { margin: 0 4px; }
+select { border: 1px solid var(--border); border-radius: 6px; padding: 6px 10px; background: #fff; }

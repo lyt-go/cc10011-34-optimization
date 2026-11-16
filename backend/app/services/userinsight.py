@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from typing import Any
 
+from app.services.insights import get_userinsight_snapshot, invalidate_userinsight_snapshot
 from app.store import store
 
 MODULE = "userinsight"
@@ -33,6 +34,10 @@ class UserinsightService:
     def get_entry(self, entry_id: int) -> dict[str, Any] | None:
         return store.find(MODULE, entry_id)
 
+    def shared_snapshot(self) -> dict[str, Any]:
+        """与订阅推送共用的洞察报告快照，供页面展示“本次推送依据”。"""
+        return get_userinsight_snapshot()
+
     def create_entry(self, values: dict[str, Any]) -> tuple[dict[str, Any] | None, list[str]]:
         missing = [field for field in REQUIRED_FIELDS if not str(values.get(field) or "").strip()]
         if missing:
@@ -44,6 +49,7 @@ class UserinsightService:
         entry["pending"] = True
         entry["abnormal"] = False
         rows.append(entry)
+        invalidate_userinsight_snapshot()
         return entry, []
 
     def run_action(self, entry_id: int, action: str) -> tuple[dict[str, Any] | None, str]:
@@ -58,4 +64,5 @@ class UserinsightService:
         entry["status"] = target
         entry["pending"] = target != STATUS_ORDER[-1]
         entry["abnormal"] = action in NEGATIVE_ACTIONS
+        invalidate_userinsight_snapshot()
         return entry, f"洞察报告已{action}"

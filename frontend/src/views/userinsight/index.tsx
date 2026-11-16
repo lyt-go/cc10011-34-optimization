@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
-import { request } from '@/api/client'
+import { fetchJson, request } from '@/api/client'
 
 const ENDPOINT = '/api/userinsight'
 const columns = [
@@ -41,11 +41,20 @@ const stats = [
 
 type Row = Record<string, string | number | null>
 
+type SharedSnapshot = {
+  名称: string
+  版本: number
+  生成时间: string
+  报告总数: number
+  已发布数: number
+}
+
 export default function UserinsightView() {
   const [rows, setRows] = useState<Row[]>([])
   const [total, setTotal] = useState(0)
   const [errorMessage, setErrorMessage] = useState('')
   const [filters, setFilters] = useState<Record<string, string>>({})
+  const [snapshot, setSnapshot] = useState<SharedSnapshot | null>(null)
   const filterFields = useMemo(() => columns.slice(0, 3), [])
 
   const reload = useCallback(async () => {
@@ -64,9 +73,21 @@ export default function UserinsightView() {
     }
   }, [filters])
 
+  const reloadSnapshot = useCallback(async () => {
+    try {
+      setSnapshot(await fetchJson<SharedSnapshot>(`${ENDPOINT}/snapshot`))
+    } catch {
+      // 快照读取失败不影响列表本身，页脚会提示列表错误。
+    }
+  }, [])
+
   useEffect(() => {
     void reload()
   }, [reload])
+
+  useEffect(() => {
+    void reloadSnapshot()
+  }, [reloadSnapshot])
 
   async function runAction(action: string, row: Row) {
     setErrorMessage('')
@@ -79,6 +100,7 @@ export default function UserinsightView() {
         throw new Error('用户洞察动作未生效，请稍后重试')
       }
       await reload()
+      await reloadSnapshot()
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : '用户洞察操作失败')
     }
@@ -100,6 +122,15 @@ export default function UserinsightView() {
           </button>
         </div>
       </header>
+
+      <div className="toolbar">
+        <span className="hint-text">
+          {snapshot
+            ? `共享快照：${snapshot.名称} v${snapshot.版本} · 已发布 ${snapshot.已发布数} / 共 ${snapshot.报告总数} 篇 · 生成于 ${snapshot.生成时间}`
+            : '共享快照：读取中'}
+          {' '}订阅推送的“洞察快报”读取同一份快照，发布或归档报告后两边一起刷新。
+        </span>
+      </div>
 
       <div className="stat-row">
         {stats.map((item) => (

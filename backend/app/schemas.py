@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from typing import Any, Generic, TypeVar
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 T = TypeVar("T")
 
@@ -22,10 +22,29 @@ class ActionResult(BaseModel):
 
 
 class EntryPayload(BaseModel):
-    """登记或修改一条业务记录时提交的字段集合。"""
+    """登记或修改一条业务记录时提交的字段集合。
+
+    前端动作按钮提交的是扁平的 {"action": "..."}，也有调用方按 {"values": {...}} 提交；
+    这里统一把顶层多余字段并入 values，避免动作被当成空参数静默放空。
+    """
 
     values: dict[str, Any] = Field(default_factory=dict)
     remark: str | None = None
+
+    model_config = ConfigDict(extra="allow")
+
+    @model_validator(mode="before")
+    @classmethod
+    def _merge_flat_fields(cls, data: Any) -> Any:
+        if not isinstance(data, dict):
+            return data
+        known = {"values", "remark"}
+        extra = {key: value for key, value in data.items() if key not in known}
+        if not extra:
+            return data
+        merged = dict(data)
+        merged["values"] = {**extra, **(data.get("values") or {})}
+        return merged
 
 
 
